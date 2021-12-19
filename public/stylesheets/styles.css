@@ -1,0 +1,58 @@
+.message-box {
+  display: flex;
+  flex-direction: column-reverse;
+  border-width: 1px;
+  border-style: solid;
+  border-color: slategray;
+  border-radius: 3px;
+  padding: 15px;
+  margin: auto;
+  height: 500px;
+  width: 1000px;
+  overflow-y: scroll;
+  overflow-wrap: normal;
+}
+
+.compose-message {
+  padding-top: 10px;
+}
+
+.modal-content {
+  position: relative;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  margin: auto;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  border-radius: 5px;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-header {
+  padding-top: 5px;
+  display: flex;
+  justify-content: center;
+}
+
+.modal-footer {
+  padding-bottom: 5px;
+  display: flex;
+  justify-content: center;
+}
+
+.display-name-login-input {
+  text-align: center;
+}
+
+.new-message:hover {
+  color: darkorange;
+}
+
+.typing-notfication {
+  font-weight: lighter;
+  font-size: 20px;
+  padding-left: 10px;
+}
