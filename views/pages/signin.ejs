@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head'); %>
+</head>
+<body>
+  <header class="header-container">
+    <%- include('../partials/header'); %>
+  </header>
+
+  <main class="container main-container">
+    <div class="modal-content" id="modal-content">
+      <div class="modal-header">
+        <h3>Sign in</h3>
+      </div>
+      <div class="modal-body">
+        <form action="/signin" method="post" id="modal-form">
+          <div class="grid">
+            <div></div>
+            <input type="username" name="username" class="display-name-login-input" placeholder="Username">
+            <div></div>
+          </div>
+          <div class="grid">
+            <div></div>
+            <input type="password" name="password" class="display-name-login-input" placeholder="Password">
+            <div></div>
+          </div>
+          <div class="grid">
+            <div></div>
+            <button type="submit">Sign in</button>
+            <div></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <p>First time here? <a href="/newuser"> Create an account</a></p>
+      </div>
+    </div>
+  </main>
+  <script src="./javascript/chatScripts.js"></script>
+</body>
+</html>

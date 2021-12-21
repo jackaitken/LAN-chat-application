@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head'); %>
+</head>
+<body>
+  <header class="header-container">
+    <%- include('../partials/header'); %>
+  </header>
+
+  <main class="container main-container">
+    <div class="container message-box" id="message-list"></div>
+
+    <div id="typing-notification" class="typing-notfication"></div>
+
+    <div class="grid compose-message">
+      <form action="" id="compose-message-form">
+        <div class="grid">
+          <div>
+            <input type="text" id="message-input" autocomplete="off" placeholder="Your message">
+          </div>
+        </div>
+        <div class="grid">
+          <div></div>
+          <div></div>
+          <div>
+            <button type="submit">Send</button>
+          </div>
+          <div></div>
+          <div></div>
+        </div>
+      </form>
+    </div>
+  </main>
+  <script src="./javascript/chatScripts.js"></script>
+</body>
+</html>

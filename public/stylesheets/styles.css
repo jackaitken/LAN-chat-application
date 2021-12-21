@@ -1,18 +1,26 @@
+.header-container {
+  margin-bottom: 0px;
+  padding-bottom: 10px;
+}
+
+.main-container {
+  margin-top: 0px;
+  padding: 0px;
+}
+
 .message-box {
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   border-width: 1px;
   border-style: solid;
   border-color: slategray;
   border-radius: 3px;
-  padding: 15px;
   margin: auto;
-  height: 500px;
-  width: 1000px;
+  height: 450px;
+  padding: 15px;
   overflow-y: scroll;
   overflow-wrap: normal;
 }
-
 .compose-message {
   padding-top: 10px;
 }
@@ -47,7 +55,7 @@
   text-align: center;
 }
 
-.new-message:hover {
+#new-message:hover {
   color: darkorange;
 }
 

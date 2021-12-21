@@ -14,8 +14,9 @@ const PgPersistence = require('./lib/pg-persistence');
 const PORT = config.PORT;
 const LokiStore = store(session);
 
+app.set('view engine', 'ejs');
 app.use(morgan('common'));
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: false }));
 app.use(session({
   cookie: {
@@ -43,44 +44,55 @@ app.use((req, res, next) => {
   next();
 });
 
-// function requiresAuth(req, res, next) {
-//   if (!res.locals.signedIn) {
-//     console.log('Unauthorized');
-//     res.redirect(302, '/users/signin');
-//   } else {
-//     next();
-//   }
-// }
+function requiresAuth(req, res, next) {
+  if (!res.locals.signedIn) {
+    console.log('Unauthorized');
+    res.redirect(302, '/signin');
+  } else {
+    next();
+  }
+}
 
-// Routes
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, './public/index.html'));
+app.get('/', requiresAuth,
+  (req, res) => {
+    res.render('pages/index');
 });
 
 app.get('/signin', (req, res) => {
-  res.sendFile(path.join(__dirname, './public/signin.html'));
+  res.render('pages/signin');
 });
 
 app.post('/signin', async(req, res) => {
-    let username = req.body.username;
-    let password = req.body.password;
+  let username = req.body.username.trim();
+  let password = req.body.password;
 
-    let authenicated = await res.locals.store.verifyCredentials(username, password);
-    if (authenicated) {
-      req.session.username = username;
-      req.session.signedIn = true;
-      res.redirect('/');
-    } else {
-      res.redirect('/signin');
-    }
-
-  if (username === 'admin' && password === 'password') {
+  let authenicated = await res.locals.store.verifyCredentials(username, password);
+  if (authenicated) {
+    req.session.username = username;
+    req.session.signedIn = true;
     res.redirect('/');
+  } else {
+    res.redirect('/signin');
   }
 });
 
 app.get('/newuser', (req, res) => {
-  res.sendFile(path.join(__dirname, './public/newuser.html'));
+  res.render('pages/newuser');
+});
+
+app.post('/newuser', async(req, res) => {
+  let username = req.body.username.trim();
+  let password = req.body.password;
+
+  let createUser = await res.locals.store.createNewUser(username, password);
+
+  if (createUser) {
+    req.session.username = username;
+    req.session.signedIn = true;
+    res.redirect('/');
+  } else {
+    res.redirect('/newuser');
+  }
 });
 
 // Handle socket connections
@@ -88,6 +100,7 @@ io.on('connection', socket => {
 
   // Incoming message
   socket.on('incoming message', data => {
+    console.log(data);
     io.emit('incoming message', data);
   });
 

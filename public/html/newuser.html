@@ -20,23 +20,23 @@
         <h3>Create a new account</h3>
       </div>
       <div class="modal-body">
-        <form action="#" id="modal-form">
+        <form action="/newuser" method='post' id="modal-form">
           <div class="grid">
             <div></div>
-            <input type="username" id="username-input" class="display-name-login-input" placeholder="Username">
+            <input type="username" name="username" class="display-name-login-input" placeholder="Username">
             <div></div>
           </div>
           <div class="grid">
             <div></div>
-            <input type="password" id="password-input" class="display-name-login-input" placeholder="Password">
+            <input type="password" name="password" class="display-name-login-input" placeholder="Password">
+            <div></div>
+          </div>
+          <div class="grid">
+            <div></div>
+            <button type="submit">Create account</button>
             <div></div>
           </div>
         </form>
-        <div class="grid">
-          <div></div>
-          <button type="submit">Create account</button>
-          <div></div>
-        </div>
       </div>
     </div>
   </main>
