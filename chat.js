@@ -4,6 +4,7 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
+const flash = require('express-flash');
 const session = require('express-session');
 const store = require('connect-loki');
 const morgan = require('morgan');
@@ -32,6 +33,8 @@ app.use(session({
   store: new LokiStore({}),
 }));
 
+app.use(flash());
+
 // Create a new datastore
 app.use((req, res, next) => {
   res.locals.store = new PgPersistence(req.session);
@@ -41,12 +44,15 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   res.locals.username = req.session.username;
   res.locals.signedIn = req.session.signedIn;
+  res.locals.flash = req.session.flash;
+  delete req.session.flash;
   next();
 });
 
 function requiresAuth(req, res, next) {
   if (!res.locals.signedIn) {
     console.log('Unauthorized');
+    req.flash('warning', 'You must sign in');
     res.redirect(302, '/signin');
   } else {
     next();
@@ -55,11 +61,15 @@ function requiresAuth(req, res, next) {
 
 app.get('/', requiresAuth,
   (req, res) => {
-    res.render('pages/index');
+    res.render('pages/index', {
+      flash: req.flash(),
+    });
 });
 
 app.get('/signin', (req, res) => {
-  res.render('pages/signin');
+  res.render('pages/signin', {
+    flash: req.flash(),
+  });
 });
 
 app.post('/signin', async(req, res) => {
@@ -70,6 +80,7 @@ app.post('/signin', async(req, res) => {
   if (authenicated) {
     req.session.username = username;
     req.session.signedIn = true;
+    req.flash('success', 'Welcome back!');
     res.redirect('/');
   } else {
     res.redirect('/signin');
@@ -89,10 +100,18 @@ app.post('/newuser', async(req, res) => {
   if (createUser) {
     req.session.username = username;
     req.session.signedIn = true;
+    req.flash('success', 'Account created. Welcome!');
     res.redirect('/');
   } else {
     res.redirect('/newuser');
   }
+});
+
+app.post('/signout', (req, res) => {
+  delete req.session.username;
+  req.session.signedIn = false;
+  req.flash('success', 'Successfully signed out');
+  res.redirect('/signin');
 });
 
 // Handle socket connections
