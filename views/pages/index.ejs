@@ -9,6 +9,16 @@
   </header>
 
   <main class="container main-container">
+
+    <% if (flash) { %>
+      <% let flashMessages = Object.keys(flash); %>
+      <div>
+        <% flashMessages.forEach(type => { %>
+          <div class="flash flash-<%- type %>"><%- flash[type] %></div>
+        <% }); %>
+        </div>
+    <% } %>
+
     <div class="container message-box" id="message-list"></div>
 
     <div id="typing-notification" class="typing-notfication"></div>
