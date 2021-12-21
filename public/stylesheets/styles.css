@@ -1,11 +1,20 @@
 .header-container {
   margin-bottom: 0px;
   padding-bottom: 10px;
+  padding-top: 7px;
+}
+
+.sign-out-form {
+  text-align: left;
+}
+
+.sign-out.button {
+  width: 10%;
 }
 
 .main-container {
   margin-top: 0px;
-  padding: 0px;
+  padding: 6px;
 }
 
 .message-box {
@@ -23,6 +32,25 @@
 }
 .compose-message {
   padding-top: 10px;
+}
+
+.flash {
+  background-color: #cbe5f2;
+  color: #3399cc;
+  margin: 20px 0 1.5rem;
+  max-width: 1000px;
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+.flash-success {
+  background-color: #cbf2e5;
+  color: #33cc99;
+}
+
+.flash-warning {
+  background-color: #ffcfbf;
+  color: #ff6633;
 }
 
 .modal-content {
