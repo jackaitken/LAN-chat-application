@@ -1,3 +1,8 @@
+.title-link {
+  color: inherit;
+  text-decoration: none;
+}
+
 .header-container {
   margin-bottom: 0px;
   padding-bottom: 10px;
@@ -6,10 +11,11 @@
 
 .sign-out-form {
   text-align: left;
+  padding-bottom: 0%;
 }
 
-.sign-out.button {
-  width: 10%;
+.sign-out-button {
+  margin: 0%;
 }
 
 .main-container {
@@ -34,22 +40,32 @@
   padding-top: 10px;
 }
 
+@keyframes flashAnimation {
+  0% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 .flash {
-  background-color: #cbe5f2;
   color: #3399cc;
-  margin: 20px 0 1.5rem;
-  max-width: 1000px;
+  text-align: center;
   padding: 10px 20px;
-  border-radius: 10px;
+  animation-name: flashAnimation;
+  animation-duration: 5000ms;
+  animation-fill-mode: forwards;
 }
 
 .flash-success {
-  background-color: #cbf2e5;
   color: #33cc99;
 }
 
 .flash-warning {
-  background-color: #ffcfbf;
   color: #ff6633;
 }
 
@@ -81,10 +97,6 @@
 
 .display-name-login-input {
   text-align: center;
-}
-
-#new-message:hover {
-  color: darkorange;
 }
 
 .typing-notfication {

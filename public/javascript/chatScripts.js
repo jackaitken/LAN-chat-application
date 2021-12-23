@@ -5,17 +5,29 @@ document.addEventListener('DOMContentLoaded', () => {
   let input = document.getElementById('message-input');
   let messages = document.getElementById('message-list');
   let typingBox = document.getElementById('typing-notification');
+  let displayNameForm = document.getElementById('set-display-name');
+  let displayNameInput = document.getElementById('display-name-input');
+  let displayName = 'Unknown';
+  input.focus();
 
   // Send message
   form.addEventListener('submit', event => {
     event.preventDefault();
     if (input.value) {
       socket.emit('incoming message', {
-        displayName: 'Test',
+        displayName: displayName,
         message: input.value,
       });
       input.value = '';
       typingBox.innerText = ''
+    }
+  });
+
+  displayNameForm.addEventListener('submit', event => {
+    event.preventDefault();
+    if (displayNameInput.value) {
+      displayName = displayNameInput.value;
+      displayNameInput.setAttribute('aria-invalid', 'false');
     }
   });
 

@@ -45,14 +45,13 @@ app.use((req, res, next) => {
   res.locals.username = req.session.username;
   res.locals.signedIn = req.session.signedIn;
   res.locals.flash = req.session.flash;
-  delete req.session.flash;
   next();
 });
 
 function requiresAuth(req, res, next) {
   if (!res.locals.signedIn) {
     console.log('Unauthorized');
-    req.flash('warning', 'You must sign in');
+    req.flash('warning', 'Please sign in or create an account');
     res.redirect(302, '/signin');
   } else {
     next();
@@ -63,6 +62,7 @@ app.get('/', requiresAuth,
   (req, res) => {
     res.render('pages/index', {
       flash: req.flash(),
+      signedIn: res.locals.signedIn,
     });
 });
 
@@ -83,12 +83,17 @@ app.post('/signin', async(req, res) => {
     req.flash('success', 'Welcome back!');
     res.redirect('/');
   } else {
-    res.redirect('/signin');
+    req.flash('warning', 'Username or password is incorrect');
+    res.render('pages/signin', {
+      username: username,
+    });
   }
 });
 
 app.get('/newuser', (req, res) => {
-  res.render('pages/newuser');
+  res.render('pages/newuser', {
+    flash: req.flash(),
+  });
 });
 
 app.post('/newuser', async(req, res) => {
@@ -103,6 +108,7 @@ app.post('/newuser', async(req, res) => {
     req.flash('success', 'Account created. Welcome!');
     res.redirect('/');
   } else {
+    req.flash('warning', 'This username already exists. Please try again');
     res.redirect('/newuser');
   }
 });

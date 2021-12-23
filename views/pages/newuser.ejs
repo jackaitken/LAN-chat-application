@@ -6,6 +6,8 @@
 <body>
   <header class="header-container">
     <%- include('../partials/header'); %>
+    <hr>
+    <%- include('../partials/flash'); %>
   </header>
 
   <main class="container main-container">
@@ -31,6 +33,9 @@
             <div></div>
           </div>
         </form>
+      </div>
+      <div class="modal-footer">
+        <p>Already have an account? <a href="/signin"> Return to sign in</a></p>
       </div>
     </div>
   </main>

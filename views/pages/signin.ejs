@@ -6,9 +6,12 @@
 <body>
   <header class="header-container">
     <%- include('../partials/header'); %>
+    <hr>
+    <%- include('../partials/flash'); %>
   </header>
 
   <main class="container main-container">
+
     <div class="modal-content" id="modal-content">
       <div class="modal-header">
         <h3>Sign in</h3>
@@ -17,7 +20,7 @@
         <form action="/signin" method="post" id="modal-form">
           <div class="grid">
             <div></div>
-            <input type="username" name="username" class="display-name-login-input" placeholder="Username">
+            <input type="username" name="username" class="display-name-login-input" placeholder="Username" value="<%= username ? username : ''; %>">
             <div></div>
           </div>
           <div class="grid">

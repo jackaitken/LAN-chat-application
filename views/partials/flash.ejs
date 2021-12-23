@@ -1,0 +1,8 @@
+<% if (flash) { %>
+  <% let flashMessages = Object.keys(flash); %>
+  <div>
+    <% flashMessages.forEach(type => { %>
+      <div class="flash flash-<%= type %>"><%= flash[type] %></div>
+    <% }); %>
+    </div>
+<% } %>
