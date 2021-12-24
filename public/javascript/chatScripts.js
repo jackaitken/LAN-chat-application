@@ -11,16 +11,26 @@ document.addEventListener('DOMContentLoaded', () => {
   input.focus();
 
   // Send message
-  form.addEventListener('submit', event => {
+  form.addEventListener('submit', async function(event) {
+    let data = {};
     event.preventDefault();
     if (input.value) {
-      socket.emit('incoming message', {
-        displayName: displayName,
-        message: input.value,
-      });
+      data.message = input.value;
+      socket.emit('incoming message', data);
       input.value = '';
-      typingBox.innerText = ''
+      typingBox.innerText = '';
     }
+
+    let response = await fetch('/getUsername', { method: 'GET' });
+    let username = await response.json();
+
+    data.username = username;
+
+    await fetch('/newMessage', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'application/json' }
+    });
   });
 
   displayNameForm.addEventListener('submit', event => {
