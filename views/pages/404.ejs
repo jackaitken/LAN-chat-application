@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head'); %>
+</head>
+<body>
+  <div class="container"> 
+    <header class="header-container">
+      <%- include('../partials/header'); %>
+      <% if (signedIn) { %>
+        <%- include('../partials/sign-out'); %>
+      <% } %>
+      <hr>
+    </header>
+  </div>
+
+  <main class="container main-container">
+    
+    <div class="container message-box" id="message-list"></div>
+    <div>
+      <h1>404 Not Found</h1>
+      <p>Oops...Page not found</p>
+    </div>
+  </main>
+</body>
+</html>

@@ -9,7 +9,9 @@ const session = require('express-session');
 const store = require('connect-loki');
 const morgan = require('morgan');
 const io = new Server(server);
-const path = require('path');
+const bodyParser = require('body-parser');
+const chatMessages = {};
+
 const PgPersistence = require('./lib/pg-persistence');
 
 const PORT = config.PORT;
@@ -19,6 +21,7 @@ app.set('view engine', 'ejs');
 app.use(morgan('common'));
 app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(session({
   cookie: {
     httpOnly: true,
@@ -72,21 +75,23 @@ app.get('/signin', (req, res) => {
   });
 });
 
-app.post('/signin', async(req, res) => {
-  let username = req.body.username.trim();
-  let password = req.body.password;
-
-  let authenicated = await res.locals.store.verifyCredentials(username, password);
-  if (authenicated) {
-    req.session.username = username;
-    req.session.signedIn = true;
-    req.flash('success', 'Welcome back!');
-    res.redirect('/');
-  } else {
-    req.flash('warning', 'Username or password is incorrect');
-    res.render('pages/signin', {
-      username: username,
-    });
+app.post('/signin', async(req, res, next) => {
+  try {
+    let username = req.body.username.trim();
+    let password = req.body.password;
+  
+    let authenticated = await res.locals.store.verifyCredentials(username, password);
+    if (authenticated) {
+      req.session.username = username;
+      req.session.signedIn = true;
+      req.flash('success', 'Welcome back! Set your display name below');
+      res.redirect('/');
+    } else {
+      req.flash('warning', 'Username or password is incorrect');
+      res.redirect('signin')
+    }
+  } catch(error) {
+    next(error);
   }
 });
 
@@ -96,20 +101,24 @@ app.get('/newuser', (req, res) => {
   });
 });
 
-app.post('/newuser', async(req, res) => {
-  let username = req.body.username.trim();
-  let password = req.body.password;
-
-  let createUser = await res.locals.store.createNewUser(username, password);
-
-  if (createUser) {
-    req.session.username = username;
-    req.session.signedIn = true;
-    req.flash('success', 'Account created. Welcome!');
-    res.redirect('/');
-  } else {
-    req.flash('warning', 'This username already exists. Please try again');
-    res.redirect('/newuser');
+app.post('/newuser', async(req, res, next) => {
+  try {
+    let username = req.body.username.trim();
+    let password = req.body.password;
+  
+    let createUser = await res.locals.store.createNewUser(username, password);
+  
+    if (createUser) {
+      req.session.username = username;
+      req.session.signedIn = true;
+      req.flash('success', 'Account created. Welcome! Set your display name below');
+      res.redirect('/');
+    } else {
+      req.flash('warning', 'This username already exists. Please try again');
+      res.redirect('/newuser');
+    }
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -120,19 +129,44 @@ app.post('/signout', (req, res) => {
   res.redirect('/signin');
 });
 
+app.get('/getUsername', (req, res) => {
+  res.json(res.locals.username);
+});
+
+app.post('/newMessage', async(req, res, next) => {
+  try {
+    debugger;
+    let username = req.body.username;
+    let message = req.body.message;
+    let addMessage = await res.locals.store.addMessage(username, message);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // Handle socket connections
 io.on('connection', socket => {
-
+  
   // Incoming message
   socket.on('incoming message', data => {
-    console.log(data);
+    if (chatMessages[socket.id]) {
+      chatMessages[socket.id].push(data.message)
+    } else {
+      chatMessages[socket.id] = [data.message];
+    }
+    console.log(chatMessages);
     io.emit('incoming message', data);
   });
-
+  
   // Typing event
   socket.on('typing', displayName => {
     io.emit('typing', displayName);
   });
+});
+
+app.use((err, req, res, next) => {
+  console.log(err);
+  res.status(404).render('/pages/404');
 });
 
 server.listen(PORT, () => {
