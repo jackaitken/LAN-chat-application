@@ -129,16 +129,22 @@ app.post('/signout', (req, res) => {
   res.redirect('/signin');
 });
 
+// Fetch requests from client
+app.get('/getMessages', async(req, res) => {
+  let username = res.locals.username;
+  let messages = await res.locals.store.loadMessages(username);
+  res.json(messages);
+});
+
 app.get('/getUsername', (req, res) => {
   res.json(res.locals.username);
 });
 
 app.post('/newMessage', async(req, res, next) => {
   try {
-    debugger;
     let username = req.body.username;
     let message = req.body.message;
-    let addMessage = await res.locals.store.addMessage(username, message);
+    await res.locals.store.addMessage(username, message);
   } catch (error) {
     next(error);
   }
@@ -149,18 +155,12 @@ io.on('connection', socket => {
   
   // Incoming message
   socket.on('incoming message', data => {
-    if (chatMessages[socket.id]) {
-      chatMessages[socket.id].push(data.message)
-    } else {
-      chatMessages[socket.id] = [data.message];
-    }
-    console.log(chatMessages);
     io.emit('incoming message', data);
   });
   
   // Typing event
-  socket.on('typing', displayName => {
-    io.emit('typing', displayName);
+  socket.on('typing', username => {
+    io.emit('typing', username);
   });
 });
 

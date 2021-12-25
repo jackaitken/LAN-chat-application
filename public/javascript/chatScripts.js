@@ -1,31 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
   let socket = io();
+
+  loadMessages();
   
   let form = document.getElementById('compose-message-form');
   let input = document.getElementById('message-input');
-  let messages = document.getElementById('message-list');
-  let typingBox = document.getElementById('typing-notification');
-  let displayNameForm = document.getElementById('set-display-name');
-  let displayNameInput = document.getElementById('display-name-input');
-  let displayName = 'Unknown';
+  let messagesList = document.getElementById('message-list');
+
   input.focus();
 
   // Send message
   form.addEventListener('submit', async function(event) {
-    let data = {};
     event.preventDefault();
+
+    let data = {};
+    let response = await fetch('/getUsername', { method: 'GET' });
+    let username = await response.json();
+
     if (input.value) {
       data.message = input.value;
+      data.username = username;
       socket.emit('incoming message', data);
       input.value = '';
       typingBox.innerText = '';
     }
 
-    let response = await fetch('/getUsername', { method: 'GET' });
-    let username = await response.json();
-
-    data.username = username;
-
+    // Send message to server
     await fetch('/newMessage', {
       method: 'POST',
       body: JSON.stringify(data),
@@ -33,32 +33,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  displayNameForm.addEventListener('submit', event => {
-    event.preventDefault();
-    if (displayNameInput.value) {
-      displayName = displayNameInput.value;
-      displayNameInput.setAttribute('aria-invalid', 'false');
-    }
-  });
-
   form.addEventListener('keypress', () => {
-    socket.emit('typing', userdisplayName);
+    socket.emit('typing', username);
   });
   
   // Receive any messages
   socket.on('incoming message', data => {
-    messages.scrollTop = messages.scrollHeight;
+    messagesList.scrollTop = messagesList.scrollHeight;
     let item = document.createElement('div');
-    item.textContent = `${data.displayName}:  ${data.message}`;
+    item.textContent = `${data.username}:  ${data.message}`;
     item.id = 'new-message';
-    messages.appendChild(item);
+    messagesList.appendChild(item);
     typingBox.innerText = '';
   });
 
-  socket.on('typing', displayName => {
-    if (userdisplayName !== displayName) {
+  socket.on('typing', typingUsername => {
+    if (username !== typingUsername) {
       typingBox = document.getElementById('typing-notification');
-      typingBox.innerText = `${displayName} is typing...`;
+      typingBox.innerText = `${typingUsername} is typing...`;
     }
   });
+
+  async function loadMessages() {
+    let response = await fetch('/getMessages', { method: 'GET' });
+    let messages = await response.json();
+
+    messages.forEach(data => {
+      let item = document.createElement('div');
+      item.textContent = `${data.username}: ${data.message}`
+      item.id = 'new-message';
+      messagesList.appendChild(item);
+    });
+  }
 });

@@ -1,7 +1,8 @@
 CREATE TABLE users (
   id serial PRIMARY KEY,
   username text,
-  password text NOT NULL
+  password text NOT NULL,
+  date_created timestamp DEFAULT(CURRENT_TIMESTAMP),
 );
 
 CREATE TABLE messages (
