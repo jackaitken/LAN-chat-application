@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
   let socket = io();
-
   loadMessages();
   
   let form = document.getElementById('compose-message-form');
   let input = document.getElementById('message-input');
   let messagesList = document.getElementById('message-list');
+  let typingBox = document.getElementById('typing-notification');
 
   input.focus();
 
@@ -33,25 +33,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  form.addEventListener('keypress', () => {
+  form.addEventListener('keypress', async() => {
+    let response = await fetch('/getUsername', { method: 'GET' });
+    let username = await response.json();
     socket.emit('typing', username);
   });
   
   // Receive any messages
   socket.on('incoming message', data => {
-    messagesList.scrollTop = messagesList.scrollHeight;
-    let item = document.createElement('div');
-    item.textContent = `${data.username}:  ${data.message}`;
-    item.id = 'new-message';
-    messagesList.appendChild(item);
     typingBox.innerText = '';
+    messagesList.scrollTop = messagesList.scrollHeight;
+    addMessageToList(data);
   });
 
-  socket.on('typing', typingUsername => {
+  socket.on('typing', async(typingUsername) => {
+    let response = await fetch('/getUsername', { method: 'GET' });
+    let username = await response.json();
     if (username !== typingUsername) {
-      typingBox = document.getElementById('typing-notification');
       typingBox.innerText = `${typingUsername} is typing...`;
     }
+  });
+
+  socket.on('signin', username => {
+    let signInBox = document.getElementById('sign-in-notification');
+    signInBox.style.animationPlayState = 'running';
+    signInBox.innerText = `${username} just signed in!`;
   });
 
   async function loadMessages() {
@@ -59,10 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
     let messages = await response.json();
 
     messages.forEach(data => {
-      let item = document.createElement('div');
-      item.textContent = `${data.username}: ${data.message}`
-      item.id = 'new-message';
-      messagesList.appendChild(item);
+      addMessageToList(data);
     });
+  }
+
+  function addMessageToList(data) {
+    let item = document.createElement('div');
+    item.textContent = `${data.username}: ${data.message}`
+    item.id = 'new-message';
+    messagesList.prepend(item);
   }
 });

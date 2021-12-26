@@ -162,6 +162,11 @@ io.on('connection', socket => {
   socket.on('typing', username => {
     io.emit('typing', username);
   });
+
+  // New user signed in
+  socket.on('signin', username => {
+    io.emit('signin', username);
+  });
 });
 
 app.use((err, req, res, next) => {

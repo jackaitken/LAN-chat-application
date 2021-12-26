@@ -29,7 +29,8 @@
 
 .message-box {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
+  overflow: auto;
   border-width: 1px;
   border-style: solid;
   border-color: slategray;
@@ -37,14 +38,12 @@
   margin: auto;
   height: 350px;
   padding: 15px;
-  overflow-y: scroll;
-  overflow-wrap: normal;
 }
 .compose-message {
   padding-top: 10px;
 }
 
-@keyframes flashAnimation {
+@keyframes fadeAnimation {
   0% {
     opacity: 1;
   }
@@ -60,7 +59,7 @@
   color: #3399cc;
   text-align: center;
   padding: 10px 20px;
-  animation-name: flashAnimation;
+  animation-name: fadeAnimation;
   animation-duration: 5000ms;
   animation-fill-mode: forwards;
 }
@@ -107,4 +106,26 @@
   font-weight: lighter;
   font-size: 20px;
   padding-left: 10px;
+  height: 30px;
+}
+
+#new-message {
+  color: white;
+  background-color: #1e88e52c;
+  width: fit-content;
+  transition: transform .5s;
+  padding: 1%;
+  border-radius: 3%;
+  margin: 5px;
+}
+
+#new-message:hover {
+  transform: scale(1.1);
+}
+
+#sign-in-notification {
+  animation-name: fadeAnimation;
+  animation-duration: 5000ms;
+  animation-fill-mode: forwards;
+  animation-play-state: paused;
 }
