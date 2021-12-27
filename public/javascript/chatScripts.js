@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  let socket = io();
   loadMessages();
+  let socket = io();
   
   let form = document.getElementById('compose-message-form');
   let input = document.getElementById('message-input');
@@ -23,14 +23,13 @@ document.addEventListener('DOMContentLoaded', () => {
       socket.emit('incoming message', data);
       input.value = '';
       typingBox.innerText = '';
-    }
 
-    // Send message to server
-    await fetch('/newMessage', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: { 'Content-Type': 'application/json' }
-    });
+      await fetch('/newMessage', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
   });
 
   form.addEventListener('keypress', async() => {
@@ -40,7 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   
   // Receive any messages
-  socket.on('incoming message', data => {
+  socket.on('incoming message', async(data) => {
+    let response = await fetch('/getUsername', { method: 'GET' });
+    let username = await response.json();
     typingBox.innerText = '';
     messagesList.scrollTop = messagesList.scrollHeight;
     addMessageToList(data);
@@ -55,9 +56,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   socket.on('signin', username => {
-    let signInBox = document.getElementById('sign-in-notification');
+    let signInBox = document.getElementById('notification');
     signInBox.style.animationPlayState = 'running';
     signInBox.innerText = `${username} just signed in!`;
+  });
+
+  socket.on('new account', username => {
+    let newUserBox = document.getElementById('notification');
+    newUserBox.style.animationPlayState = 'running';
+    newUserBox.innerText = `${username} just created an account!`;
   });
 
   async function loadMessages() {

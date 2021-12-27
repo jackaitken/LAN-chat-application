@@ -10,7 +10,7 @@ const store = require('connect-loki');
 const morgan = require('morgan');
 const io = new Server(server);
 const bodyParser = require('body-parser');
-const chatMessages = {};
+let sentMessages = [];
 
 const PgPersistence = require('./lib/pg-persistence');
 
@@ -167,10 +167,14 @@ io.on('connection', socket => {
   socket.on('signin', username => {
     io.emit('signin', username);
   });
+
+  // New account created
+  socket.on('new account', username => {
+    io.emit('new account', username);
+  });
 });
 
 app.use((req, res, _next) => {
-  debugger;
   console.log('Not found');
   res.status(404).render('pages/404');
 });
