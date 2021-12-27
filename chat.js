@@ -169,9 +169,10 @@ io.on('connection', socket => {
   });
 });
 
-app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(404).render('/pages/404');
+app.use((req, res, _next) => {
+  debugger;
+  console.log('Not found');
+  res.status(404).render('pages/404');
 });
 
 server.listen(PORT, () => {

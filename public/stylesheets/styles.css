@@ -129,3 +129,9 @@
   animation-fill-mode: forwards;
   animation-play-state: paused;
 }
+
+.not-found {
+  align-items: center;
+  margin: auto;
+  text-align: center;
+}
