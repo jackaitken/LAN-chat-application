@@ -10,7 +10,6 @@ const store = require('connect-loki');
 const morgan = require('morgan');
 const io = new Server(server);
 const bodyParser = require('body-parser');
-let sentMessages = [];
 
 const PgPersistence = require('./lib/pg-persistence');
 
@@ -84,7 +83,7 @@ app.post('/signin', async(req, res, next) => {
     if (authenticated) {
       req.session.username = username;
       req.session.signedIn = true;
-      req.flash('success', 'Welcome back! Set your display name below');
+      req.flash('success', 'Welcome back!');
       res.redirect('/');
     } else {
       req.flash('warning', 'Username or password is incorrect');
@@ -111,7 +110,7 @@ app.post('/newuser', async(req, res, next) => {
     if (createUser) {
       req.session.username = username;
       req.session.signedIn = true;
-      req.flash('success', 'Account created. Welcome! Set your display name below');
+      req.flash('success', 'Account created. Welcome!');
       res.redirect('/');
     } else {
       req.flash('warning', 'This username already exists. Please try again');
@@ -120,6 +119,36 @@ app.post('/newuser', async(req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+app.get('/changeDisplayName', async(req, res, next) => {
+  try {
+    let username = req.session.username;
+    let displayName = await res.locals.store.getDisplayName(username);
+    res.render('pages/changeDisplayName', {
+      displayName: displayName,
+    });
+  } catch(error) {
+    next(error);
+  }
+});
+
+app.post('/changeDisplayName', async(req, res, next) => {
+  try {
+    let username = req.session.username;
+    let displayName = req.body.displayName;
+    let setDisplayName = res.locals.store.setDisplayName(displayName, username);
+    
+    if (setDisplayName) {
+      req.flash('success', 'Display name changed');
+      res.redirect('/');
+    } else {
+      req.flash('warning', 'Could not change username at this time. Please try again');
+      res.redirect('/changeDisplayName');
+    }
+  } catch(error) {
+    next(error);
+  } 
 });
 
 app.post('/signout', (req, res) => {
@@ -136,13 +165,28 @@ app.get('/getMessages', async(req, res) => {
   res.json(messages);
 });
 
-app.get('/getUsername', (req, res) => {
-  res.json(res.locals.username);
+app.get('/getDisplayName', async(req, res, next) => {
+  try {
+    let username = req.session.username;
+    let displayName = await res.locals.store.getDisplayName(username);
+    res.json(displayName);
+  } catch(error) {
+    next(error);
+  } 
+});
+
+app.get('/getUsername', async(req, res, next) => {
+  try {
+    let username = req.session.username;
+    res.json(username);
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.post('/newMessage', async(req, res, next) => {
   try {
-    let username = req.body.username;
+    let username = req.session.username;
     let message = req.body.message;
     await res.locals.store.addMessage(username, message);
   } catch (error) {

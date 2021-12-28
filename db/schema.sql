@@ -2,6 +2,7 @@ CREATE TABLE users (
   id serial PRIMARY KEY,
   username text,
   password text NOT NULL,
+  display_name text DEFAULT('New user'),
   date_created timestamp DEFAULT(CURRENT_TIMESTAMP),
 );
 

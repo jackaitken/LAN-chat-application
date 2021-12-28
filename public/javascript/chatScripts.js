@@ -14,46 +14,46 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
 
     let data = {};
-    let response = await fetch('/getUsername', { method: 'GET' });
-    let username = await response.json();
+    let response = await fetch('/getDisplayName', { method: 'GET' });
+    let displayName = await response.json();
 
     if (input.value) {
       data.message = input.value;
-      data.username = username;
+      data.display_name = displayName;
       socket.emit('incoming message', data);
       input.value = '';
       typingBox.innerText = '';
-
-      await fetch('/newMessage', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
-      });
     }
+
+    await fetch('/newMessage', {
+      method: 'POST',
+      body: JSON.stringify({
+        message: data.message,
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    });
   });
 
   form.addEventListener('keypress', async() => {
-    let response = await fetch('/getUsername', { method: 'GET' });
+    let response = await fetch('/getDisplayName', { method: 'GET' });
     let username = await response.json();
     socket.emit('typing', username);
   });
   
   // Receive any messages
-  socket.on('incoming message', async(data) => {
-    let response = await fetch('/getUsername', { method: 'GET' });
-    let username = await response.json();
+  socket.on('incoming message', data => {
     typingBox.innerText = '';
     messagesList.scrollTop = messagesList.scrollHeight;
     addMessageToList(data);
   });
 
-  socket.on('typing', async(typingUsername) => {
-    let response = await fetch('/getUsername', { method: 'GET' });
-    let username = await response.json();
-    if (username !== typingUsername) {
-      typingBox.innerText = `${typingUsername} is typing...`;
-    }
-  });
+  // socket.on('typing', async(typingUsername) => {
+  //   let response = await fetch('/getDisplayName', { method: 'GET' });
+  //   let username = await response.json();
+  //   if (username !== typingUsername) {
+  //     typingBox.innerText = `${typingUsername} is typing...`;
+  //   }
+  // });
 
   socket.on('signin', username => {
     let signInBox = document.getElementById('notification');
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function addMessageToList(data) {
     let item = document.createElement('div');
-    item.textContent = `${data.username}: ${data.message}`
+    item.textContent = `${data.display_name}: ${data.message}`
     item.id = 'new-message';
     messagesList.prepend(item);
   }

@@ -1,8 +1,10 @@
 <div class="sign-out-form grid">
   <form action="/signout" method="post">
-    <button class="sign-out-button">Sign out</button>
+    <button class="header-button">Sign out</button>
   </form>
-  <div></div>
+  <form action="/changeDisplayName">
+    <button class="header-button">Change Display Name</button>
+  </form>
   <div><%- include('./flash'); %></div>
   <div id="notification"></div>
 </div>

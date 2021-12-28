@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('../partials/head'); %>
+</head>
+<body>
+  <div class="container"> 
+    <header class="header-container">
+      <%- include('../partials/header'); %>
+      <hr>
+    </header>
+  </div>
+
+  <main class="container main-container">
+    <div class="container grid">
+      <div style="text-align: center;">
+        <p>Currently your display name is set to: <%= displayName %></p>
+      </div>
+    </div>
+    <div class="modal-content" id="modal-content">
+      <div class="modal-header">
+        <h3>Change Display Name</h3>
+      </div>
+      <div class="modal-body">
+        <form action="/changeDisplayName" method="post" id="modal-form">
+          <div class="grid">
+            <div></div>
+            <input type="username" id="displayName" name="displayName" class="display-name-login-input" placeholder="New display name">
+            <div></div>
+          </div>
+          <div class="grid">
+            <div></div>
+            <button type="submit">Submit</button>
+            <div></div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
