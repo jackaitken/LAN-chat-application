@@ -34,11 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  form.addEventListener('keypress', async() => {
-    let response = await fetch('/getDisplayName', { method: 'GET' });
-    let username = await response.json();
-    socket.emit('typing', username);
-  });
+  // form.addEventListener('keypress', async() => {
+  //   let response = await fetch('/getDisplayName', { method: 'GET' });
+  //   let username = await response.json();
+  //   socket.emit('typing', username);
+  // });
   
   // Receive any messages
   socket.on('incoming message', data => {
@@ -47,13 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
     addMessageToList(data);
   });
 
-  // socket.on('typing', async(typingUsername) => {
-  //   let response = await fetch('/getDisplayName', { method: 'GET' });
-  //   let username = await response.json();
-  //   if (username !== typingUsername) {
-  //     typingBox.innerText = `${typingUsername} is typing...`;
-  //   }
-  // });
+  socket.on('typing', async(typingUsername) => {
+    let response = await fetch('/getDisplayName', { method: 'GET' });
+    let username = await response.json();
+    if (username !== typingUsername) {
+      typingBox.innerText = `${typingUsername} is typing...`;
+    }
+  });
 
   socket.on('signin', username => {
     let signInBox = document.getElementById('notification');

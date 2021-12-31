@@ -46,6 +46,7 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   res.locals.username = req.session.username;
   res.locals.signedIn = req.session.signedIn;
+  res.locals.displayName = req.session.displayName;
   res.locals.flash = req.session.flash;
   next();
 });
@@ -60,7 +61,18 @@ function requiresAuth(req, res, next) {
   }
 }
 
-app.get('/', requiresAuth,
+function requiresDisplayName(req, res, next) {
+  if (!res.locals.displayName) {
+    console.log('Display name required');
+    res.redirect(302, '/changeDisplayName');
+  } else {
+    next();
+  }
+};
+
+app.get('/', 
+  requiresAuth,
+  requiresDisplayName,
   (req, res) => {
     res.render('pages/index', {
       flash: req.flash(),
@@ -81,6 +93,8 @@ app.post('/signin', async(req, res, next) => {
   
     let authenticated = await res.locals.store.verifyCredentials(username, password);
     if (authenticated) {
+      let displayName = await res.locals.store.getDisplayName(username);
+      req.session.displayName = displayName;
       req.session.username = username;
       req.session.signedIn = true;
       req.flash('success', 'Welcome back!');
@@ -137,9 +151,11 @@ app.post('/changeDisplayName', async(req, res, next) => {
   try {
     let username = req.session.username;
     let displayName = req.body.displayName;
-    let setDisplayName = res.locals.store.setDisplayName(displayName, username);
+    let setDisplayName = await res.locals.store.setDisplayName(displayName, username);
     
     if (setDisplayName) {
+      debugger;
+      req.session.displayName = displayName;
       req.flash('success', 'Display name changed');
       res.redirect('/');
     } else {
@@ -153,6 +169,7 @@ app.post('/changeDisplayName', async(req, res, next) => {
 
 app.post('/signout', (req, res) => {
   delete req.session.username;
+  delete req.session.displayName;
   req.session.signedIn = false;
   req.flash('success', 'Successfully signed out');
   res.redirect('/signin');
