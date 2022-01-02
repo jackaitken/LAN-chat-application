@@ -135,3 +135,12 @@
   margin: auto;
   text-align: center;
 }
+
+.footer {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  left: 0;
+  align-items: center;
+  text-align: center;
+}

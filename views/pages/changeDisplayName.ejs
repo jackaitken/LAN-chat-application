@@ -7,6 +7,9 @@
   <div class="container"> 
     <header class="header-container">
       <%- include('../partials/header'); %>
+      <% if (signedIn) { %>
+        <%- include('../partials/sign-out'); %>
+      <% } %>
       <hr>
     </header>
   </div>
@@ -14,7 +17,7 @@
   <main class="container main-container">
     <div class="container grid">
       <div style="text-align: center;">
-        <% if (displayName) { %>
+        <% if (!displayName) { %>
           <p>Welcome! Please set a display name</p>
         <% } else { %>
           <p>Currently your display name is set to: <%= displayName %></p>
@@ -40,6 +43,9 @@
         </form>
       </div>
     </div>
+    <footer>
+      <%- include('../partials/footer'); %>
+    </footer>
   </main>
 </body>
 </html>

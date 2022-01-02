@@ -141,6 +141,7 @@ app.get('/changeDisplayName', async(req, res, next) => {
     let displayName = await res.locals.store.getDisplayName(username);
     res.render('pages/changeDisplayName', {
       displayName: displayName,
+      signedIn: res.locals.signedIn,
     });
   } catch(error) {
     next(error);
@@ -154,7 +155,6 @@ app.post('/changeDisplayName', async(req, res, next) => {
     let setDisplayName = await res.locals.store.setDisplayName(displayName, username);
     
     if (setDisplayName) {
-      debugger;
       req.session.displayName = displayName;
       req.flash('success', 'Display name changed');
       res.redirect('/');
@@ -175,7 +175,7 @@ app.post('/signout', (req, res) => {
   res.redirect('/signin');
 });
 
-// Fetch requests from client
+// AJAX requests from client
 app.get('/getMessages', async(req, res) => {
   let username = res.locals.username;
   let messages = await res.locals.store.loadMessages(username);
@@ -214,22 +214,14 @@ app.post('/newMessage', async(req, res, next) => {
 // Handle socket connections
 io.on('connection', socket => {
   
-  // Incoming message
   socket.on('incoming message', data => {
     io.emit('incoming message', data);
   });
-  
-  // Typing event
-  socket.on('typing', username => {
-    io.emit('typing', username);
-  });
 
-  // New user signed in
   socket.on('signin', username => {
     io.emit('signin', username);
   });
 
-  // New account created
   socket.on('new account', username => {
     io.emit('new account', username);
   });
