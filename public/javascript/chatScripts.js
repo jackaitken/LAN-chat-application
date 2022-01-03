@@ -68,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
   async function addMessageToList(data, username) {
     let item = document.createElement('div');
     item.textContent = `${data.display_name}: ${data.message}`;
-    debugger;
     if (data.username === username) {
       item.id = 'new-message-user';
     } else {
