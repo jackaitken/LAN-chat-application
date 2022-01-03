@@ -55,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   async function loadMessages() {
-    debugger;
     let messagesResponse = await fetch('/getMessages', { method: 'GET' });
     let messages = await messagesResponse.json();
 
