@@ -192,6 +192,16 @@ app.get('/getDisplayName', async(req, res, next) => {
   } 
 });
 
+app.get('/getUserDetails', async(req, res, next) => {
+  try {
+    let username = req.session.username;
+    let displayName = await res.locals.store.getDisplayName(username);
+    res.json({ username: username, displayName: displayName });
+  } catch (error) {
+    next(error);
+  } 
+});
+
 app.get('/getUsername', async(req, res, next) => {
   try {
     let username = req.session.username;

@@ -14,12 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
 
     let data = {};
-    let response = await fetch('/getDisplayName', { method: 'GET' });
-    let displayName = await response.json();
+    let response = await fetch('/getUserDetails', { method: 'GET' });
+    let { username, displayName } = await response.json();
 
     if (input.value) {
       data.message = input.value;
       data.display_name = displayName;
+      data.username = username;
       socket.emit('incoming message', data);
       input.value = '';
       typingBox.innerText = '';
@@ -34,10 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  socket.on('incoming message', data => {
+  socket.on('incoming message', async(data) => {
     typingBox.innerText = '';
     messagesList.scrollTop = messagesList.scrollHeight;
-    addMessageToList(data);
+    let username = await getUsername();
+    await addMessageToList(data, username);
   });
 
   socket.on('signin', username => {
@@ -53,18 +55,32 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   async function loadMessages() {
-    let response = await fetch('/getMessages', { method: 'GET' });
-    let messages = await response.json();
+    debugger;
+    let messagesResponse = await fetch('/getMessages', { method: 'GET' });
+    let messages = await messagesResponse.json();
 
-    messages.forEach(data => {
-      addMessageToList(data);
-    });
+    let username = await getUsername();
+
+    for await (let message of messages) {
+      await addMessageToList(message, username);
+    }
   }
 
-  function addMessageToList(data) {
+  async function addMessageToList(data, username) {
     let item = document.createElement('div');
-    item.textContent = `${data.display_name}: ${data.message}`
-    item.id = 'new-message';
+    item.textContent = `${data.display_name}: ${data.message}`;
+    debugger;
+    if (data.username === username) {
+      item.id = 'new-message-user';
+    } else {
+      item.id = 'new-message';
+    }
     messagesList.prepend(item);
+  }
+
+  async function getUsername() {
+    let usernameResponse = await fetch('/getUsername', { method: 'GET' });
+    let username = await usernameResponse.json();
+    return username;
   }
 });
