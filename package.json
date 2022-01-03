@@ -4,6 +4,7 @@
   "description": "",
   "main": "chat.js",
   "scripts": {
+    "heroku-postbuild": "npm install --production",
     "start": "nodemon chat.js"
   },
   "keywords": [],
@@ -30,5 +31,9 @@
     "jest": "^27.4.5",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.15"
+  },
+  "engines" : {
+    "node": "12.19.0",
+    "npm": "7.24.0"
   }
 }

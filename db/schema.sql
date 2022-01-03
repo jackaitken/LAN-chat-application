@@ -3,7 +3,7 @@ CREATE TABLE users (
   username text,
   password text NOT NULL,
   display_name text,
-  date_created timestamp DEFAULT(CURRENT_TIMESTAMP),
+  date_created timestamp DEFAULT(CURRENT_TIMESTAMP)
 );
 
 CREATE TABLE messages (
