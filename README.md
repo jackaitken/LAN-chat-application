@@ -1,6 +1,6 @@
 # Chat Application
 
-If you would like to see a live version of this application [please visit this website](http://safe-fjord-73332.herokuapp.com/).
+If you would like to see a live version of this application [please visit this website](http://safe-fjord-73332.herokuapp.com/). For best results, please use the desktop version of Google Chrome. (The page may take a minute or two to load as it was deployed with the free Heroku plan).
 
 To get started just create a new account, set up your display name and starting chatting.
 
